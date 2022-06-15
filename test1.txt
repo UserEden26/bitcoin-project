@@ -1,2 +1,6 @@
 test123
 https://www.kaggle.com/datasets/kaushiksuresh147/bitcoin-tweets
+https://coinmarketcap.com/currencies/bitcoin/historical-data/
+https://www.investing.com/crypto/bitcoin/historical-data
+
+https://finance.yahoo.com/quote/BTC-USD/history?period1=1528934400&period2=1655164800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
