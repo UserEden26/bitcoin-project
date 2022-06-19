@@ -6,17 +6,62 @@ import plotly.express as px
 import pandas as pd
 from dash.dependencies import Output, Input, State
 from main_dash import app
+from app import *
 
 
+# select which pollution
 @app.callback(
-    Output('num_main_barchart', 'value'),
-    Input('num_main_barchart', 'value'),
-    State('num_main_barchart', 'min'),
-    State('num_main_barchart', 'max')
+    Output('tab_content','children'),
+    Input('tabs','value')
 )
-def limit_values(number, min_possible, max_possible):
-    if number < min_possible:
-        number = min_possible
-    elif number > max_possible:
-        number = max_possibleS
-    return number
+
+
+def type_of_pollution(tab):
+    if tab == 'זיהום אוויר':
+        return html.Div(id='container_air',
+                        children=[
+                            html.H1(className='h1', 
+                                    children='זיהום אוויר'),
+
+                            dcc.Graph(id='barchart_country_water',
+                                    className='barchart_country',
+                                    figure={
+                                        'data': [
+                                            {'x': country_air['Country'], 'y': country_air['AirQuality'], 'type':'bar'}],
+                                            'layout': {'title': 'גרף זיהום אוויר לפי מדינה'},
+                                        }
+                                ),
+                            dcc.Graph(
+                                className='top_citys',
+                                figure={
+                                    'data':[
+                                        {'x':city_air['City'], 'y':city_air['AirQuality'], 'type':'bar'}],
+                                        }
+                                )            
+                        ])
+
+
+    elif tab == 'זיהום מים':
+        return html.Div(id='container_water',
+
+                        children=[
+                            html.H1(className='h1', 
+                                    children='זיהום מים'),
+
+                            dcc.Graph(id='barchart_country_water',
+                                    className='barchart_country',
+                                    figure={
+                                        'data': [
+                                            {'x': country_water['Country'], 'y': country_water['WaterQuality'], 'type':'bar'}],
+                                            'layout': {'title': 'גרף זיהום מים לפי מדינה'},
+                                        }
+                                ),
+                            dcc.Graph(
+                                className='top_citys',
+                                figure={
+                                    'data':[
+                                        {'x':city_water['City'], 'y':city_water['WaterQuality'], 'type':'bar'}],
+                                        }
+                                )
+                        ])
+

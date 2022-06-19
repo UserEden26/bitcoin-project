@@ -9,7 +9,6 @@ from callbacks import *
 from main_dash import app
 import re
 
-
 # load csv to df
 df = pd.read_csv('cities_air_quality_water_pollution.18-10-2021.csv')
 
@@ -29,30 +28,86 @@ df['AirQuality'] = 100-df['AirQuality']
 
 
 country_mean = df.groupby(['Country']).mean()
-amount_of_countrys = len(country_mean.index)
+
+# worst pollution
+country_air = country_mean.sort_values(by=['AirQuality','WaterQuality'], ascending=False)
+country_air = country_air.reset_index()
+
+country_air = country_air.head(10)
+
+
+
+# worst pollution
+country_water = country_mean.sort_values(by=['WaterQuality' ,'AirQuality'], ascending=False)
+country_water = country_water.reset_index()
+
+country_water = country_water.head(10)
+
+# !!!need to fix, values over 100!
+citys = df.groupby(['City', 'Country']).mean()
+citys = citys.reset_index()
+# top water pollution citys
+city_water = citys.sort_values(by=['WaterQuality', 'AirQuality'], ascending=False)
+# sort by countrys
+city_water_country = df.sort_values(by=['Country','WaterQuality', 'AirQuality'], ascending=False)
+
+# top air pollution citys
+city_air = citys.sort_values(by=['AirQuality', 'WaterQuality'], ascending=False)
+# sort by countrys
+city_air_country = df.sort_values(by=['Country', 'AirQuality', 'WaterQuality'], ascending=False)
+
+
 
 
 # app layout
 def activate():
-    return html.Div(children=[
-        html.H1(className='h1',
-                children='polution mission'),
-        # dcc.Graph(
+    return html.Div(className='main',
+            children=[
+            dcc.Tabs(id='tabs',
+                    value='זיהום אוויר',
+                    children=[
+                        dcc.Tab(id='air',
+                                label='זיהום אוויר',
+                                value='זיהום אוויר'),
+                        dcc.Tab(id='water',
+                                label='זיהום מים',
+                                value='זיהום מים')
+                            ]
+                        ),
+                   html.Div(id='tab_content')
+        ])
+            
+            
+        # html.H1(className='h1',
+        #         children='Air polution'),
+
+        # dcc.Graph(id='barchart_country',
+        #     className='barchart_country',
         #     figure={
-        #         {'x':[], 'y':[], 'type':'bar', 'name'}
+        #         'data': [
+        #             {'x': country_mean['Country'], 'y': country_mean['AirQuality'], 'type':'bar'}],
+        #             'layout': {'title': 'גרף זיהום אוויר לפי מדינה'},
         #     }
-        ),
-        dcc.Slider(0, amount_of_countrys, 10, value=10),
-        dcc.Input(
-            id='num_main_barchart',
-            placeholder='כמות מדינות להצגה',
-            type='number',
-            value='',
-            min=1,
-            max=177
-        )
-        # dcc.RangeSlider(0, 100, count=10, value=[0, 100])
-    ])
+        # ),
+
+      
+        # dcc.Input(id='amount_of_countrys',
+        #     className='amount_of_countrys',
+        #     placeholder='כמות מדינות להצגה',
+        #     type='number',
+        #     value='',
+        #     min=3,
+        #     max=10),
+        
+        # dcc.RadioItems(className='worst_best',
+        #                         options=[
+        #                         {'label':'המזהמות ביותר', 'value':'המזהמות ביותר'},
+        #                         {'label':'הכי פחות מזהמות', 'value':'הכי פחות מזהמות'}
+        #                         ],
+        #                         inline=True,
+        #                         value='המזהמות ביותר'
+        #                         ),
+    
 
 
 # run web layout
