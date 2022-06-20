@@ -18,50 +18,47 @@ from app import *
 
 def type_of_pollution(tab):
     if tab == 'זיהום אוויר':
-        return html.Div(id='container_air',
-                        children=[
-                            html.H1(className='h1', 
-                                    children='זיהום אוויר'),
-
-                            dcc.Graph(id='barchart_country_water',
-                                    className='barchart_country',
-                                    figure={
-                                        'data': [
-                                            {'x': country_air['Country'], 'y': country_air['AirQuality'], 'type':'bar'}],
-                                            'layout': {'title': 'גרף זיהום אוויר לפי מדינה'},
-                                        }
-                                ),
-                            dcc.Graph(
-                                className='top_citys',
-                                figure={
-                                    'data':[
-                                        {'x':city_air['City'], 'y':city_air['AirQuality'], 'type':'bar'}],
-                                        }
-                                )            
-                        ])
-
+        return air
 
     elif tab == 'זיהום מים':
-        return html.Div(id='container_water',
+        return water
+                
 
-                        children=[
-                            html.H1(className='h1', 
-                                    children='זיהום מים'),
 
-                            dcc.Graph(id='barchart_country_water',
-                                    className='barchart_country',
-                                    figure={
-                                        'data': [
-                                            {'x': country_water['Country'], 'y': country_water['WaterQuality'], 'type':'bar'}],
-                                            'layout': {'title': 'גרף זיהום מים לפי מדינה'},
-                                        }
-                                ),
-                            dcc.Graph(
-                                className='top_citys',
-                                figure={
-                                    'data':[
-                                        {'x':city_water['City'], 'y':city_water['WaterQuality'], 'type':'bar'}],
-                                        }
-                                )
-                        ])
+# water callbacks
 
+@app.callback(
+  Output('top_citys_water','figure'),
+  Input('values_above','value')
+)
+
+def city_graf_w(above):
+  above = int(above)
+  df = city_water.loc[city_water['WaterQuality'] >= above]
+  fig = px.bar(df,
+        x=df['City'],
+        y=df['WaterQuality'])
+  return fig
+
+
+
+
+# trying..
+# @app.callback(
+#     Output('barchart_country_water','figure'),
+#     Input('countrys_water','value')
+# )
+
+# def select_countrys(dropdown_value):
+#     dff = df[df.state.str.contains('|'.join(dropdown_value))]
+#     dff = df.sort_values(by=['WaterQuality'])
+#     if dropdown_value is None:
+#         return {'data': [{'x': country_water['Country'], 'y': country_water['WaterQuality'], 'type':'bar'}],
+#                                             'layout': {'title': 'גרף זיהום מים לפי מדינה'}}
+
+#     fig =   px.bar(dff,
+#             x=dff['City'],
+#             y=dff['WaterQuality'])
+#     return fig
+
+    

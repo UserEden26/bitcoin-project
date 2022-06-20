@@ -20,6 +20,10 @@ body {
   text-transform: capitalize;
 }
 
+.top_n_countrys {
+  color: white;
+}
+
 /* .barchart_country {
   height: 50vh;
   width: 50vw;
