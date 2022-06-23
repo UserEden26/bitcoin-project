@@ -16,8 +16,13 @@ df.columns = ['City', 'Region', 'Country', 'AirQuality', 'WaterQuality']
 
 df['Country'] = df['Country'].str.replace('"', '')
 
-df = df.drop(['Region'],axis=1)
 
+df = df.drop(['Region'],axis=1)
+df = df.drop_duplicates(subset=['City'])
+
+df["Country"] = df["Country"].str.replace('"', "")
+df['WaterQuality'] = df['WaterQuality'].astype(int)
+df['AirQuality'] = df['AirQuality'].astype(int)
 # make air quality values rigth
 df['AirQuality'] = 100-df['AirQuality']
 # air quality 100 = worst , 0 = clear
@@ -28,10 +33,9 @@ country_mean = df.groupby(['Country']).mean().reset_index()
 country_clear = country_mean['Country'].str.strip()
 country_mean['Country'] = country_clear
 
-country_index = country_mean.set_index('Country')
 
 country_air = country_mean.sort_values(by=['AirQuality','WaterQuality'], ascending=False)
-#country_air = country_air.head(10)
+
 
 country_water = country_mean.sort_values(by=['WaterQuality' ,'AirQuality'], ascending=False)
 country_water = country_water.reset_index()
@@ -39,20 +43,18 @@ country_water = country_water.head(10)
 
 city_water1 = df.groupby(['City']).mean()
 city_water1 = city_water1.reset_index()
-city_water = df.sort_values(by=['Country', 'WaterQuality','AirQuality'], ascending=False)
-
-
+#city_water = df.sort_values(by=['Country', 'WaterQuality','AirQuality'], ascending=False)
 city_air = df.sort_values(by=['Country', 'AirQuality','WaterQuality'], ascending=False)
 
+citys = df.groupby(['City']).mean()
+citys = citys.reset_index()
 
-#country_mean = country_mean['Country'].str.strip()
+list_of_countrys = country_mean["Country"].tolist()
 
-list_of_countrys = country_mean['Country'].tolist()
-
-help(dcc.RadioItems)
-    
-    
+#df = df.set_index('Country')
+#df = df.filter(like='Afghanistan',axis=0)
 
 
-    
-#help(dcc.Dropdown)
+#df.groupby('team')['points'].nunique()
+
+print(country_mean[country_mean.Country == 'Venezuela'])
