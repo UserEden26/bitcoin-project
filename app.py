@@ -20,8 +20,8 @@ def activate():
                 id="tabs",
                 value="זיהום אוויר",
                 children=[
-                    dcc.Tab(id="air", label="זיהום אוויר", value="זיהום אוויר"),
-                    dcc.Tab(id="water", label="זיהום מים", value="זיהום מים"),
+                    dcc.Tab(id="air", className='air', label="זיהום אוויר", value="זיהום אוויר"),
+                    dcc.Tab(id="water", className='water', label="זיהום מים", value="זיהום מים"),
                 ],
             ),
             html.Div(id="tab_content"),

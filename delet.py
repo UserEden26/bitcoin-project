@@ -47,14 +47,16 @@ city_water1 = city_water1.reset_index()
 city_air = df.sort_values(by=['Country', 'AirQuality','WaterQuality'], ascending=False)
 
 citys = df.groupby(['City']).mean()
-citys = citys.reset_index()
+citys = citys.sort_values(by=['WaterQuality', 'AirQuality'], ascending=False)
 
-list_of_countrys = country_mean["Country"].tolist()
 
-#df = df.set_index('Country')
-#df = df.filter(like='Afghanistan',axis=0)
+df = df.sort_values(by=['WaterQuality', 'AirQuality'], ascending=False)
 
 
 #df.groupby('team')['points'].nunique()
 
-print(country_mean[country_mean.Country == 'Venezuela'])
+citys = citys.join(df.set_index('City'), on='City',lsuffix='_try')
+citys = citys.drop(columns=['AirQuality' , 'WaterQuality'])
+citys.columns = ['AirQuality' , 'WaterQuality', 'Country']
+citys = citys.reset_index()
+print(citys)

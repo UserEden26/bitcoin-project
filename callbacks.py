@@ -20,7 +20,7 @@ df["Country"] = df["Country"].str.replace('"', "")
 df["Country"] = df["Country"].str.strip()
 df['City'] = df["City"].str.strip()
 
-df.drop_duplicates(subset=['City'])
+df = df.drop_duplicates(subset=['City'])
 
 df["WaterQuality"] = df["WaterQuality"].astype(int)
 df["AirQuality"] = df["AirQuality"].astype(int)
@@ -54,22 +54,17 @@ country_water = country_water.head(10)
 # make city df with country, city ,waterquality and airquality
 citys = df.groupby(['City']).mean()
 citys = citys.reset_index()
-# df_join = df.drop(['AirQuality', 'WaterQuality'],axis=1)
-# citys = citys.set_index('City').join(df_join.set_index('City'),how='right')
-# citys = citys.reset_index()
 
 # top air pollution citys
 city_air = citys.sort_values(by=["AirQuality", "WaterQuality"], ascending=False)
-# sort by countrys
-city_air_country = df.sort_values(
-    by=["Country", "AirQuality", "WaterQuality"], ascending=False
-)
+
 
 
 
 # air tab layout
 air = html.Div(
     id="container_air",
+    className='container_air',
     children=[
         html.H1(className="h1", children="זיהום אוויר"),
         dcc.Graph(
