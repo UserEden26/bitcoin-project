@@ -18,7 +18,7 @@ def activate():
         children=[
             dcc.Tabs(
                 id="tabs",
-                value="זיהום אוויר",
+                value="זיהום מים",
                 children=[
                     dcc.Tab(id="air", className='air', label="זיהום אוויר", value="זיהום אוויר"),
                     dcc.Tab(id="water", className='water', label="זיהום מים", value="זיהום מים"),

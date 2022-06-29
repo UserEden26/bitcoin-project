@@ -13,6 +13,48 @@ from callbacks import *
 # top water pollution citys
 city_water = df.sort_values(by=["WaterQuality", 'AirQuality'], ascending=False)
 
+
+# coutrys graph 
+c_graph_water =  px.bar(country_water,
+                        x=country_water["Country"],
+                        y=country_water["WaterQuality"],
+                        range_y=[0,100],
+                        title='ה10 מדינות עם זיהום המים הגבוה ביותר',
+                        template="plotly_dark",
+                                color_continuous_scale='reds',
+                                range_color=[0,100],
+                                color=country_water['WaterQuality'])
+c_graph_water.update_layout(
+                        title_x=0.5,
+                        font_size=20,
+                        hoverlabel_font_size=28),
+c_graph_water.update_coloraxes(showscale=False)
+# c_graph_water.update_xaxes(title_text='ערים') 
+c_graph_water.update_yaxes(title_text='איכות מים')
+if len(country_water.index)>10:
+    c_graph_water.update_xaxes(nticks=5)              
+            
+
+# city graph 
+fig_city_water=px.bar(city_water,
+                            x=city_water["City"],
+                            y=city_water["WaterQuality"],
+                            range_y=[0,100],
+                            title='זיהום המים בערים',
+                            template="plotly_dark",
+                            color_continuous_scale='reds',
+                            range_color=[0,100],
+                            color=city_water['WaterQuality'])
+fig_city_water.update_layout(
+                        title_x=0.5,
+                        font_size=20,
+                        hoverlabel_font_size=28)
+fig_city_water.update_coloraxes(showscale=False)
+fig_city_water.update_xaxes(title_text='ערים',
+                            nticks=5) 
+fig_city_water.update_yaxes(title_text='')
+
+
 # water tab layout
 water = html.Div(
     id="container_water",
@@ -24,15 +66,7 @@ water = html.Div(
             dcc.Graph(
                 id="barchart_country_water",
                 className="barchart_country",
-                figure=
-                    px.bar(country_water,
-                        x=country_water["Country"],
-                        y=country_water["WaterQuality"],
-                        range_y=[0,100],
-                        title='ה10 מדינות עם זיהום המים הגבוה ביותר',
-                        template="plotly_dark")
-                
-            ),
+                figure=c_graph_water),
         ),
         html.Div(className='container_dropdown_c',
                 children=
@@ -49,18 +83,13 @@ water = html.Div(
             dcc.Graph(
                 id="top_citys_water",
                 className="top_citys",
-                figure=px.bar(city_water,
-                            x=city_water["City"],
-                            y=city_water["WaterQuality"],
-                            range_y=[0,100],
-                            title='זיהום המים בערים',
-                            template="plotly_dark")
+                figure=fig_city_water
             ),
         ),
         html.Button(
-            id='reset_country_grafh_water',
-            className='reset_country_grafh',
-            children='איתחול גרף'
+            id='creat_file',
+            className='creat_file_water',
+            children='ייצא גרף'
         ),
         html.Div(className='container_range_city',
                 children=
@@ -110,13 +139,7 @@ def type_of_pollution(tab):
 
 def coutrys_select(countrys):
   if countrys is None or countrys==[]:
-    fig2=px.bar(country_water,
-            x=country_water["Country"],
-            y=country_water["WaterQuality"],
-            range_y=[0,100],
-            title='ה10 מדינות עם זיהום המים הגדול ביותר',
-            template="plotly_dark")
-    return fig2
+    return c_graph_water
 
   elif countrys is not None:
     df = country_mean.loc[country_mean["Country"].isin(countrys)]
@@ -126,7 +149,17 @@ def coutrys_select(countrys):
           y=df['WaterQuality'],
           range_y=[0,100],
           title='מדינות מזהמות לאחר בחירה',
-          template="plotly_dark")
+          template="plotly_dark",
+                                color_continuous_scale='reds',
+                                range_color=[0,100],
+                                color=df['WaterQuality'])
+    fig.update_layout(
+                        title_x=0.5,
+                        font_size=20,
+                        hoverlabel_font_size=28),
+    fig.update_coloraxes(showscale=False)
+    fig.update_xaxes(title_text='מדינות') 
+    fig.update_yaxes(title_text='איכות מים')
     return fig
     
 
@@ -135,14 +168,14 @@ def coutrys_select(countrys):
 @app.callback(
   Output('top_citys_water','figure'),
   Output('range_city_water','value'),
+  Output("barchart_country_water", 'hoverData'),
   Input('range_city_water','value'),
   Input("barchart_country_water", 'hoverData'),
-  Input('reset_country_grafh_water', 'n_clicks'),
   prevent_initial_update=True
 )
 
 # show citys per hover country on first grafh
-def city_graf_w(value, hovdata, click_reset): 
+def city_graf_w(value, hovdata): 
     filter_df = df.loc[(df['WaterQuality'] >= value[0]) & (df['WaterQuality'] <=value[1])]
     filter_df = filter_df.sort_values(['WaterQuality'], ascending=False)
     
@@ -152,15 +185,23 @@ def city_graf_w(value, hovdata, click_reset):
                 x=filter_df['City'],
                 y=filter_df['WaterQuality'],
                 range_y=[0,100],
-                title='ערים מזהמות לאחר הגבלת הסינון',
-                template="plotly_dark")
+                title=f'ערים מזהמות בטווח זיהום {value[0]}-{value[1]}',
+                template="plotly_dark",
+                                color_continuous_scale='reds',
+                                range_color=[0,100],
+                                color=filter_df['WaterQuality'])
     fig.update_layout(
-                font_size=20
-                )
+                        title_x=0.5,
+                        font_size=20,
+                        hoverlabel_font_size=28),
+    fig.update_coloraxes(showscale=False)
+    fig.update_xaxes(title_text='ערים') 
+    fig.update_yaxes(title_text='')
+    if len(filter_df.index)>10:
+        fig.update_xaxes(nticks=5)
     
-    while hovdata is None:
-        return fig, value
-    
+    l=[]
+
     if hovdata is not None:
         hov_country = hovdata['points'][0]['x']
         hover_country_data = filter_df[filter_df.Country== hov_country]
@@ -170,7 +211,7 @@ def city_graf_w(value, hovdata, click_reset):
                                 x=hover_country_data['City'],
                                 y=hover_country_data['WaterQuality'],
                                 range_y=[0,100],
-                                title=(f'{hov_country} הערים המזהמות לאחר סינון ב'),
+                                title=(f'בטווח {value[0]}-{value[1]} {hov_country} זיהום המים בערי'),
                                 template="plotly_dark",
                                 color_continuous_scale='reds',
                                 range_color=[0,100],
@@ -178,63 +219,27 @@ def city_graf_w(value, hovdata, click_reset):
             fig2.update_layout(
                         title_x=0.5,
                         font_size=20,
-                        hoverlabel_font_size=24),
+                        hoverlabel_font_size=28),
             fig2.update_coloraxes(showscale=False)
             fig2.update_xaxes(title_text='ערים') 
-            fig2.update_yaxes(title_text='איכות מים')
-            return fig2, value   
+            fig2.update_yaxes(title_text='')
+               
+            if len(hover_country_data.index)>10:
+                fig2.update_xaxes(nticks=5)
+                l= [fig2, value, hovdata]
+            l= [fig2, value, hovdata] 
 
-        elif click_reset or hover_country_data.empty is True:
+        elif hover_country_data.empty is True:
             value=[0,100]
-            dff=df.loc[(df['WaterQuality'] >= value[0]) & (df['WaterQuality'] <=value[1])]
-            dff = dff.sort_values(['WaterQuality'], ascending=False)
-            fig3 = px.bar(dff,
-                x=dff['City'],
-                y=dff['WaterQuality'],
-                range_y=[0,100],
-                title='ערים מזהמות לאחר הגבלת הסינון',
-                template="plotly_dark")
-            fig3.update_layout(
-                font_size=20
-                )
-            print(dff)
-            return fig3, value 
-        
-        
+            hovdata = None
+            l= [fig, value, hovdata]
+    
+    elif hovdata is None:
+        l= [fig, value, hovdata]
+    return l
+    
 
-        
 
-    # try:
-        
-    #     hov_country = hovdata['points'][0]['x']
-    #     hover_country_data = filter_df[filter_df.Country== hov_country]
-    #     fig2 = px.bar(hover_country_data,
-    #                         x=hover_country_data['City'],
-    #                         y=hover_country_data['WaterQuality'],
-    #                         range_y=[0,100],
-    #                         title=(f'{hov_country} הערים המזהמות לאחר סינון ב'),
-    #                         template="plotly_dark",
-    #                         color_continuous_scale='reds',
-    #                         range_color=[0,100],
-    #                         color=hover_country_data['WaterQuality'])
-    #     fig2.update_layout(
-    #                 title_x=0.5,
-    #                 font_size=20,
-    #                 hoverlabel_font_size=24),
-    #     fig2.update_coloraxes(showscale=False)    
-    #     return fig2, value
-
-    # except:
-    #     if type(hovdata['points'][0]['x']) is None:
-    #         return fig, value
-
-    #     elif hover_country_data.empty is True:
-    #         change=[0,100]
-    #         return fig, change
-
-    # finally:
-    #     if click_reset:
-    #         return fig, value
-
+    
 
 

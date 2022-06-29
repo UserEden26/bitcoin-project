@@ -11,7 +11,7 @@
 
 .container_water , .container_air{
   display: grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
+  grid-template-columns:1fr 1fr;
   grid-template-rows:auto 1fr auto auto;
   gap: 5px;
 }
@@ -26,27 +26,30 @@
 }
 
 .container_barchart_country{
-  grid-column:2/3;
+  grid-column:1/2;
   grid-row:2/3;
+  justify-self: center;
 }
 
 .container_dropdown_c {
-  grid-column:2/3;
+  grid-column:1/2;
   grid-row:3/5;
 }
 
 .container_top_citys{
-  grid-column:3/4;
+  grid-column:2/3;
   grid-row:2/3;
+  justify-self: center;
 }
 
 .reset_country_grafh{
-  grid-column:3/4;
+  grid-column:2/3;
   grid-row:3/4;
+  
 }
 
 .container_range_city {
-  grid-column:3/4;
+  grid-column:2/3;
   grid-row:4/5;
 }
 
@@ -57,10 +60,10 @@ body {
 
 .barchart_country, .top_citys{
   height: 80vh;
-  width: 49vw;
+  width: 49.3vw;
 }
 
-.container_range_city, .reset_country_grafh {
+.container_range_city, .creat_file_water {
   height: 3vh;
 }
 
