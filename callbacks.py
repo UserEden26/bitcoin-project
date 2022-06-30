@@ -18,9 +18,9 @@ df = df.drop(["Region"], axis=1)
 
 df["Country"] = df["Country"].str.replace('"', "")
 df["Country"] = df["Country"].str.strip()
-df['City'] = df["City"].str.strip()
+df["City"] = df["City"].str.strip()
 
-df = df.drop_duplicates(subset=['City'])
+df = df.drop_duplicates(subset=["City"])
 
 df["WaterQuality"] = df["WaterQuality"].astype(int)
 df["AirQuality"] = df["AirQuality"].astype(int)
@@ -32,6 +32,8 @@ df["AirQuality"] = 100 - df["AirQuality"]
 
 
 country_mean = df.groupby(["Country"]).mean().reset_index()
+country_mean["AirQuality"] = country_mean["AirQuality"].round(1)
+country_mean["WaterQuality"] = country_mean["WaterQuality"].round(1)
 
 
 list_of_countrys = country_mean["Country"].tolist()
@@ -52,19 +54,20 @@ country_water = country_mean.sort_values(
 country_water = country_water.head(10)
 
 # make city df with country, city ,waterquality and airquality
-citys = df.groupby(['City']).mean()
+citys = df.groupby(["City"]).mean()
 citys = citys.reset_index()
+citys["WaterQuality"] = citys["WaterQuality"].round(1)
+citys["AirQuality"] = citys["AirQuality"].round(1)
+
 
 # top air pollution citys
 city_air = citys.sort_values(by=["AirQuality", "WaterQuality"], ascending=False)
 
 
-
-
 # air tab layout
 air = html.Div(
     id="container_air",
-    className='container_air',
+    className="container_air",
     children=[
         html.H1(className="h1", children="זיהום אוויר"),
         dcc.Graph(
@@ -103,9 +106,6 @@ air = html.Div(
 )
 
 
-
-
-
 # trying..
 # @app.callback(
 #     Output('barchart_country_water','figure'),
@@ -123,5 +123,3 @@ air = html.Div(
 #             x=dff['City'],
 #             y=dff['WaterQuality'])
 #     return fig
-
-    
