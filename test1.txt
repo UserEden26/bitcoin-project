@@ -1,6 +1,15 @@
-test123
+
 https://www.kaggle.com/datasets/kaushiksuresh147/bitcoin-tweets
 https://coinmarketcap.com/currencies/bitcoin/historical-data/
 https://www.investing.com/crypto/bitcoin/historical-data
 
 https://finance.yahoo.com/quote/BTC-USD/history?period1=1528934400&period2=1655164800&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true
+
+מידע טוב
+https://community.plotly.com/t/how-to-populate-a-dropdown-from-unique-values-in-a-pandas-data-frame/5543/2
+
+מידע עוזר 
+https://www.youtube.com/watch?v=G8r2BB3GFVY
+https://plotly.com/python/reference/layout/#layout-paper_bgcolor
+https://plotly.com/python/colorscales/
+https://plotly.com/python/builtin-colorscales/
