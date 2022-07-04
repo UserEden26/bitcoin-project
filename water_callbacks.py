@@ -1,9 +1,9 @@
 from tkinter import font
 from turtle import title
+import os
 import dash
-from dash import Dash
-from dash import html
-from dash import dcc
+import dash_bootstrap_components as dbc
+from dash import Dash, html, dcc, dash_table
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Output, Input, State
@@ -25,7 +25,7 @@ c_graph_water = px.bar(
     title="ה10 מדינות עם זיהום המים הגבוה ביותר",
     template="plotly_dark",
     color_continuous_scale="peach",
-    range_color=[0, 100],
+    range_color=[1, 100],
     color=country_water["WaterQuality"],
 )
 c_graph_water.update_layout(
@@ -53,7 +53,7 @@ fig_city_water = px.bar(
     title="זיהום המים בערים",
     template="plotly_dark",
     color_continuous_scale="Peach",
-    range_color=[0, 100],
+    range_color=[1, 100],
     color=city_water["WaterQuality"],
 )
 fig_city_water.update_layout(
@@ -70,62 +70,67 @@ fig_city_water.update_yaxes(title_text="")
 
 # water tab layout
 water = html.Div(
-    id="container_water",
-    className="container_water",
+    id="big_container_water",
     children=[
-        html.H1(className="h1", children="זיהום מים"),
         html.Div(
-            className="container_barchart_country",
-            children=dcc.Graph(
-                id="barchart_country_water",
-                className="barchart_country",
-                figure=c_graph_water,
-            ),
+            id="container_water",
+            className="container_water",
+            children=[
+                html.H1(className="h1", children="זיהום מים"),
+                html.Div(
+                    className="container_barchart_country",
+                    children=dcc.Graph(
+                        id="barchart_country_water",
+                        className="barchart_country",
+                        figure=c_graph_water,
+                    ),
+                ),
+                html.Div(
+                    className="container_dropdown_c",
+                    children=dcc.Dropdown(
+                        id="countrys_water",
+                        className="dropdown_c",
+                        options=[{"label": i, "value": i} for i in list_of_countrys],
+                        multi=True,
+                        placeholder="...בחר אילו מדינות תרצה להציג",
+                    ),
+                ),
+                html.Div(
+                    className="container_top_citys",
+                    children=dcc.Graph(
+                        id="top_citys_water",
+                        className="top_citys",
+                        figure=fig_city_water,
+                    ),
+                ),
+                html.Button(
+                    id="zero_button_water",
+                    className="zero_button",
+                    children="ערכי אפס",
+                ),
+                html.Div(
+                    className="container_range_city",
+                    children=dcc.RangeSlider(
+                        id="range_city_water",
+                        className="range_city",
+                        max=100,
+                        min=1,
+                        marks={i: f"{i}" for i in range(0, 100)[::5]},
+                        value=[1, 100],
+                        allowCross=False,
+                    ),
+                ),
+            ],
         ),
-        html.Div(
-            className="container_dropdown_c",
-            children=dcc.Dropdown(
-                id="countrys_water",
-                className="dropdown_c",
-                options=[{"label": i, "value": i} for i in list_of_countrys],
-                multi=True,
-                placeholder="...בחר אילו מדינות תרצה להציג",
-            ),
-        ),
-        html.Div(
-            className="container_top_citys",
-            children=dcc.Graph(
-                id="top_citys_water", className="top_citys", figure=fig_city_water
-            ),
-        ),
-        html.Button(id="creat_file", className="creat_file_water", children="ייצא גרף"),
-        html.Div(
-            className="container_range_city",
-            children=dcc.RangeSlider(
-                id="range_city_water",
-                className="range_city",
-                max=citys["WaterQuality"].max(),
-                min=citys["WaterQuality"].min(),
-                marks={
-                    i: f"{i}"
-                    for i in range(
-                        int(citys["WaterQuality"].min()),
-                        int(citys["WaterQuality"].max()),
-                    )[::5]
-                },
-                value=[5, 100],
-                allowCross=False,
-            ),
-        ),
+        html.Div(id="hide_container_water", className="hide_container_water", children=[]),
     ],
 )
-
 
 # select which pollution
 @app.callback(Output("tab_content", "children"), Input("tabs", "value"))
 def type_of_pollution(tab):
     if tab == "זיהום אוויר":
-        return air
+        return Air
 
     elif tab == "זיהום מים":
         return water
@@ -156,7 +161,7 @@ def coutrys_select(countrys):
             title="מדינות מזהמות לאחר בחירה",
             template="plotly_dark",
             color_continuous_scale="Peach",
-            range_color=[0, 100],
+            range_color=[1, 100],
             color=df["WaterQuality"],
         )
         fig.update_layout(
@@ -187,6 +192,17 @@ def city_graf_w(value, hovdata):
     filter_df = df.loc[
         (df["WaterQuality"] >= value[0]) & (df["WaterQuality"] <= value[1])
     ]
+
+    # the varible that will be returned
+    l = []
+    # check if there is no value for a range
+    if len(filter_df.index) == 0:
+        value = [1, 100]
+
+    filter_df = df.loc[
+        (df["WaterQuality"] >= value[0]) & (df["WaterQuality"] <= value[1])
+    ]
+
     filter_df = filter_df.sort_values(["WaterQuality"], ascending=False)
 
     # all citys table
@@ -202,7 +218,7 @@ def city_graf_w(value, hovdata):
         title=f"ערים מזהמות בטווח זיהום {value[0]}-{value[1]}",
         template="plotly_dark",
         color_continuous_scale="peach",
-        range_color=[0, 100],
+        range_color=[1, 100],
         color=filter_df["WaterQuality"],
     )
     fig.update_layout(
@@ -217,8 +233,6 @@ def city_graf_w(value, hovdata):
     fig.update_yaxes(title_text="")
     if len(filter_df.index) > 10:
         fig.update_xaxes(nticks=5)
-
-    l = []
 
     if hovdata is not None:
         hov_country = hovdata["points"][0]["x"]
@@ -237,7 +251,7 @@ def city_graf_w(value, hovdata):
                 title=(f"בטווח {value[0]}-{value[1]} {hov_country} זיהום המים בערי"),
                 template="plotly_dark",
                 color_continuous_scale="peach",
-                range_color=[0, 100],
+                range_color=[1, 100],
                 color=hover_country_data["WaterQuality"],
             )
             fig2.update_layout(
@@ -256,10 +270,54 @@ def city_graf_w(value, hovdata):
             l = [fig2, value, hovdata]
 
         elif hover_country_data.empty is True:
-            value = [0, 100]
+            value = [1, 100]
             hovdata = None
             l = [fig, value, hovdata]
 
     elif hovdata is None:
         l = [fig, value, hovdata]
     return l
+
+
+# zero values table
+@app.callback(
+    Output("hide_container_water", "children"),
+    Output("hide_container_water", "style"),
+    Output("container_water", "style"),
+    Input("zero_button_water", "n_clicks"),
+    State("hide_container_water", "style")
+)
+def zero_val_water(zero_click, style):
+    zero_vals = df.loc[df["WaterQuality"] == 0]
+    zero_vals = zero_vals.sort_values(by="Country")
+    tabl = dash_table.DataTable(
+        zero_vals.to_dict("records"),
+        [{"name": i, "id": i} for i in df.columns],
+        id="tbl_water",
+    )
+    button=html.Button(id='tabl_button_water',className='tabl_button', children='סגור')
+    container_return = [[tabl,button], {"display": "none"}, {"filter": "blur(0)"}]
+
+    if style=={"display": "block"} and zero_click:
+        hide_see = {"display": "none", 'overflow':'scroll', 'background-color':'none'}
+        blur = {"filter": "blur(0)"}
+        container_return = [[tabl,button], hide_see, blur]
+
+    elif style=={"display": "none"} and zero_click:
+        hide_see = {"display": "block",'overflow':'scroll', 'background-color':'rgb(245,245,245)'}
+        blur = {"filter": "blur(4px)"}
+        container_return = [[tabl,button], hide_see, blur]
+    return container_return
+
+
+
+@app.callback(
+    Output("zero_button_water", "n_clicks"),
+    Input('tabl_button_water', 'n_clicks'),
+    State("hide_container_water", "style")
+)
+
+def click_adds(click_tabl_button, style_now):
+    if click_tabl_button and style_now=={"display": "none"}:
+        return 
+        

@@ -8,12 +8,21 @@
   height: 10vh;
 }
 
+.air, .water {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgb(90, 172, 244);
+  letter-spacing: 2px;
+}
 
-.container_water , .container_air{
+.big_container_water, .big_container_Air{
+  position: relative;
+}
+.container_water , .container_Air{
   display: grid;
   grid-template-columns:1fr 1fr;
-  grid-template-rows:auto 1fr auto auto;
-  gap: 5px;
+  grid-template-rows:auto auto auto 1fr;
+  gap: 7px;
 }
 
 .h1 {
@@ -27,30 +36,37 @@
 
 .container_barchart_country{
   grid-column:1/2;
-  grid-row:2/3;
+  grid-row:4/5;
   justify-self: center;
 }
 
 .container_dropdown_c {
   grid-column:1/2;
-  grid-row:3/5;
+  grid-row:2/4;
 }
 
 .container_top_citys{
   grid-column:2/3;
-  grid-row:2/3;
+  grid-row:4/5;
   justify-self: center;
 }
 
-.creat_file_water{
+.zero_button{
   grid-column:2/3;
-  grid-row:3/4;
+  grid-row:2/3;
+  font-size: 18px;
+  background-color: rgb(174, 174, 174);
+  width: 20vw;
+  margin-left: 14vw;
+  align-items: center;
+  border-radius: 6px;
+  color: rgb(72, 96, 37);
   
 }
 
 .container_range_city {
   grid-column:2/3;
-  grid-row:4/5;
+  grid-row:3/4;
 }
 
 body {
@@ -63,37 +79,38 @@ body {
   width: 49.3vw;
 }
 
-.container_range_city, .creat_file_water {
+.container_range_city, .zero_button {
   height: 3vh;
 }
 
 .dropdown_c{
-  height: 6vh;
+  height: 5vh;
+  overflow: visible;
+  width:35vw;
+  margin-left:6vw;
+  /* margin-left: 5vw; */
 }
 
-/* .top_n_countrys {
-  color: white;
-  color: rgb(77, 77, 77);
-  color: rgb(26, 26, 26);
-} */
-
-
-/* .barchart_country { 
+.hide_container_water, .hide_container_Air {
+  position: absolute;
   width: 50vw;
-
+  height: 70vh;
+  margin: 0 25vw;
+  bottom:16vh;
 }
-.dropdown_c{
-  width:50vw;
-} */
 
-
-/* .top_citys {
-  width:50vw;
-  margin-left:50vw;
+.tabl_button {
+  position: absolute;
+  bottom:63vh;
+  left: 1vh;
+  padding: 1rem;
+  background-color: yellowgreen;
+  border-radius: 10px;
+  border: 3px;
+  font-weight: 600;
+  font-size: 18px;
 }
-.range_city{
-  display: ;
-  width:48vw;
-  margin-left:50vw;
-  top: 0;
-} */
+
+
+
+
